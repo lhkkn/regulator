@@ -15,8 +15,17 @@ autonomous agent within safe ones — reads are open, writes are governed.
 
 ## Install
 
+Regulator is **not on the main PyPI index yet.** Install it from git, or grab the wheel
+from the [Releases](https://github.com/lhkkn/regulator/releases) page:
+
 ```bash
-pipx install regulator      # or: pip install regulator
+pipx install git+https://github.com/lhkkn/regulator
+```
+
+It is also on TestPyPI (a sandbox — the `--index-url` is required):
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ regulator
 ```
 
 Requires Python 3.12+. No runtime dependencies.
