@@ -12,6 +12,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -40,12 +41,17 @@ def _popen(stdout="", stderr="", code=0):
 class BackupTest(unittest.TestCase):
     def setUp(self):
         backup._MEMO = None
+        # A configured backup repo, so these tests exercise the restic paths rather than
+        # the "not configured" early return (machine-independent).
+        self._env = mock.patch.dict(os.environ, {"CONDUCTOR_BACKUP_REPO": "s3:https://example/test/backup"})
+        self._env.start()
         self._real_bin = backup._restic_bin
         self._real_kc = keychain.get
         self._real_popen = backup.subprocess.Popen
         self._real_killpg = backup.os.killpg
 
     def tearDown(self):
+        self._env.stop()
         backup._restic_bin = self._real_bin
         keychain.get = self._real_kc
         backup.subprocess.Popen = self._real_popen

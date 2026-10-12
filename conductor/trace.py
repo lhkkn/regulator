@@ -121,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     if "-n" in argv:
         try:
             limit = int(argv[argv.index("-n") + 1])
-        except IndexError, ValueError:
+        except (IndexError, ValueError):
             pass
     entries = load(limit)
 
@@ -132,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
     if "--replay" in argv:
         try:
             rid = int(argv[argv.index("--replay") + 1])
-        except IndexError, ValueError:
+        except (IndexError, ValueError):
             print("usage: regulator traces --replay <id>")
             return 2
         match = next((e for e in load(10_000) if e.get("id") == rid), None)

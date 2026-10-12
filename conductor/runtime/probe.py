@@ -29,7 +29,7 @@ def _run(cmd: list[str], timeout: int = TIMEOUT) -> str | None:
     try:
         p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return p.stdout if p.returncode == 0 else None
-    except OSError, subprocess.TimeoutExpired:
+    except (OSError, subprocess.TimeoutExpired):
         return None
 
 
@@ -37,7 +37,7 @@ def _http_json(url: str, timeout: float = 1.0) -> dict | None:
     try:
         with urllib.request.urlopen(url, timeout=timeout) as r:
             return json.loads(r.read().decode())
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return None
 
 
@@ -106,7 +106,7 @@ def _net() -> dict | None:
             try:
                 ibytes += int(cols[6])
                 obytes += int(cols[9])
-            except ValueError, IndexError:
+            except (ValueError, IndexError):
                 continue
     now = time.time()
     prev = _NET_STATE.get("prev")
@@ -151,7 +151,7 @@ def _known_ports() -> list[tuple[int, str, bool]]:
     for e in extra:
         try:
             rows.append((int(e["port"]), str(e["label"]), bool(e.get("http", False))))
-        except KeyError, TypeError, ValueError:
+        except (KeyError, TypeError, ValueError):
             continue
     return rows
 
@@ -250,7 +250,7 @@ def _toml(path: Path) -> dict | None:
     try:
         with path.open("rb") as fh:
             return tomllib.load(fh)
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return None
 
 

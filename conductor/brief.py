@@ -206,7 +206,7 @@ def build_brief(live_health: bool = True) -> dict:
         else:
             flags.append(detail)
     if not watch["alive"]:
-        flags.append("proactive watcher heartbeat stale/absent — run `conductor watch --install`")
+        flags.append("proactive watcher heartbeat stale/absent — run `regulator watch --install`")
     flags.extend(health_flags)
 
     out = io.StringIO()

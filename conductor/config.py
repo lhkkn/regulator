@@ -30,7 +30,7 @@ def _config_toml() -> dict:
     try:
         with (app_dir() / "config.toml").open("rb") as fh:
             return tomllib.load(fh)
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return {}
 
 

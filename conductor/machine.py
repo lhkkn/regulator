@@ -73,7 +73,7 @@ def _containers() -> list[str]:
         out = subprocess.run(
             ["docker", "ps", "--format", "{{.Names}}"], capture_output=True, text=True, timeout=10
         ).stdout
-    except OSError, subprocess.SubprocessError:
+    except (OSError, subprocess.SubprocessError):
         return []
     return [x for x in out.splitlines() if x.strip()]
 
@@ -100,7 +100,7 @@ def _keys_count() -> int:
 def render() -> str:
     home = Path.home()
     ws = workspace_root()
-    ws_shown = f"{ws}   (set CONDUCTOR_WORKSPACE_ROOT to target another)" if ws else "(not set — run `conductor init`)"
+    ws_shown = f"{ws}   (set CONDUCTOR_WORKSPACE_ROOT to target another)" if ws else "(not set — run `regulator init`)"
 
     home_dirs = sorted(d.name for d in home.iterdir() if d.is_dir() and not d.name.startswith("."))
     repos = _git_repos(home)

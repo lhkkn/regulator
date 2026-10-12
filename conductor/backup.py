@@ -98,7 +98,7 @@ def latest(fresh: bool = False) -> dict:
                 except subprocess.TimeoutExpired:
                     try:
                         os.killpg(child.pid, signal.SIGKILL)
-                    except ProcessLookupError, PermissionError:
+                    except (ProcessLookupError, PermissionError):
                         pass
                     child.communicate()
                     rec["error"] = "restic timed out"

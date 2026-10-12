@@ -103,7 +103,7 @@ def reveal_value(op_ref: str) -> str | None:
     env = _op_env(token)
     try:
         proc = subprocess.run([op_bin, *_op_get_args(op_ref)], capture_output=True, text=True, timeout=60, env=env)
-    except subprocess.TimeoutExpired, FileNotFoundError:
+    except (subprocess.TimeoutExpired, FileNotFoundError):
         return None
     if proc.returncode != 0:
         return None

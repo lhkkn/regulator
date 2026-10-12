@@ -88,7 +88,7 @@ def _looks_like_server(spec: dict) -> bool:
 def _servers_from_json(harness: str, path: Path) -> list[dict]:
     try:
         data = json.loads(_strip_jsonc(path.read_text(encoding="utf-8")))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return []
     block = data.get("mcp")
     if not isinstance(block, dict):
@@ -116,7 +116,7 @@ def _servers_from_toml(harness: str, path: Path) -> list[dict]:
     """kimi declares MCP servers under `mcp_servers` / `[mcp]` — both shapes seen in the wild."""
     try:
         data = tomllib.loads(path.read_text(encoding="utf-8"))
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return []
     block = data.get("mcp_servers") or data.get("mcp")
     if not isinstance(block, dict):
@@ -177,7 +177,7 @@ def declarations() -> dict[str, dict]:
     """The declared allowlist, keyed by `harness/name`. A missing file declares nothing."""
     try:
         data = tomllib.loads(DECLARATIONS.read_text(encoding="utf-8"))
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return {}
     return {f"{s.get('harness', '')}/{s.get('name', '')}": s for s in data.get("server", []) if isinstance(s, dict)}
 

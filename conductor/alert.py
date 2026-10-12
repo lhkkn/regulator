@@ -48,7 +48,7 @@ def _state_path():
 def _load_state() -> dict:
     try:
         return json.loads(_state_path().read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return {}
 
 

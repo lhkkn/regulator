@@ -138,7 +138,7 @@ def append(
     try:
         entry = {**core, "prev": prev}
         entry["hash"] = _digest(prev, core)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return {}  # a non-serializable payload is dropped, never raised
     try:
         p = path()
@@ -156,7 +156,7 @@ def append(
                     fh.write(b"\n")
         with p.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    except OSError, TypeError, ValueError:
+    except (OSError, TypeError, ValueError):
         pass
     return entry
 
@@ -237,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
     if "-n" in argv:
         try:
             limit = int(argv[argv.index("-n") + 1])
-        except IndexError, ValueError:
+        except (IndexError, ValueError):
             pass
     print(render(load(limit), verified=(ok, detail)))
     return 0 if ok else 1

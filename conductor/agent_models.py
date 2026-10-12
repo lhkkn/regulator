@@ -65,7 +65,7 @@ def load_providers(path: Path) -> dict[str, set[str]]:
     """`{provider: {model, ...}}` from an opencode config. Empty dict on any error."""
     try:
         data = json.loads(_strip_jsonc(path.read_text(encoding="utf-8")))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return {}
     if not isinstance(data, dict):
         return {}

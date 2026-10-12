@@ -58,7 +58,7 @@ def load() -> list[dict]:
     try:
         with path.open("rb") as fh:
             data = tomllib.load(fh)
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return []
     return [s for s in data.get("service", []) if s.get("name")]
 
@@ -140,7 +140,7 @@ def _local_docker() -> dict[str, str]:
         r = subprocess.run(
             ["docker", "ps", "--format", "{{.Names}} {{.Status}}"], capture_output=True, text=True, timeout=8
         )
-    except OSError, subprocess.TimeoutExpired:
+    except (OSError, subprocess.TimeoutExpired):
         return out
     for ln in r.stdout.splitlines():
         parts = ln.split(None, 1)

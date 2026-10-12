@@ -52,7 +52,7 @@ def _registered(name: str) -> bool:
     try:
         with registry_path().open("rb") as fh:
             data = tomllib.load(fh)
-    except OSError, tomllib.TOMLDecodeError:
+    except (OSError, tomllib.TOMLDecodeError):
         return False
     return any(p.get("name") == name for p in data.get("project", []))
 
@@ -128,7 +128,7 @@ def _unregistered_dirs() -> list[str]:
     try:
         known = {p.get("name") for p in load().get("project", [])}
         root = find_workspace_root()
-    except OSError, ValueError, FileNotFoundError:
+    except (OSError, ValueError, FileNotFoundError):
         return []
     out: list[str] = []
     for base in ("work/apps", "work/research"):
@@ -212,7 +212,7 @@ def _set_project_status(text: str, name: str, status: str) -> str:
 def _project_status(name: str) -> str | None:
     try:
         data = tomllib.loads(registry_path().read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return None
     for p in data.get("project", []):
         if p.get("name") == name:
@@ -384,7 +384,7 @@ def _dead_keys() -> list[dict]:
 
     try:
         data = json.loads(keys_registry().read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return []
     return [
         k

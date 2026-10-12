@@ -70,7 +70,11 @@ class AskTest(unittest.TestCase):
             return {"result": {"answers": {"satisfied": 0.9}}}
 
         with (
-            mock.patch.dict(os.environ, {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok"}, clear=False),
+            mock.patch.dict(
+                os.environ,
+                {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok", "CONDUCTOR_CLEF_ACCOUNT": "acct"},
+                clear=False,
+            ),
             mock.patch.object(judge, "_vault_token", return_value=None),
             mock.patch.object(judge, "_post", side_effect=fake_post),
         ):
@@ -96,7 +100,9 @@ class AuthFailureTest(unittest.TestCase):
         try:
             with (
                 mock.patch.dict(
-                    os.environ, {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok"}, clear=False
+                    os.environ,
+                    {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok", "CONDUCTOR_CLEF_ACCOUNT": "acct"},
+                    clear=False,
                 ),
                 mock.patch.object(judge, "_vault_token", return_value=None),
                 mock.patch("urllib.request.urlopen", side_effect=err),
@@ -117,7 +123,11 @@ class VerdictTest(unittest.TestCase):
         judge.reset()
 
     def _env(self):
-        return mock.patch.dict(os.environ, {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok"}, clear=False)
+        return mock.patch.dict(
+            os.environ,
+            {"CONDUCTOR_CLEF_ENABLED": "1", "CONDUCTOR_CLEF_TOKEN": "tok", "CONDUCTOR_CLEF_ACCOUNT": "acct"},
+            clear=False,
+        )
 
     def test_prefers_clef_true(self):
         with (

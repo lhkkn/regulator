@@ -18,7 +18,7 @@ def get(service: str, account: str, *, timeout: int = 10) -> str | None:
             text=True,
             timeout=timeout,
         )
-    except subprocess.TimeoutExpired, FileNotFoundError:
+    except (subprocess.TimeoutExpired, FileNotFoundError):
         return None
     if proc.returncode != 0:
         return None

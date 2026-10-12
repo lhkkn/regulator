@@ -49,7 +49,7 @@ def launchctl_list(*, timeout: int = 15) -> str:
     """`launchctl list` output, or '' if unavailable."""
     try:
         return subprocess.run(["launchctl", "list"], capture_output=True, text=True, timeout=timeout).stdout
-    except OSError, subprocess.TimeoutExpired:
+    except (OSError, subprocess.TimeoutExpired):
         return ""
 
 
@@ -59,7 +59,7 @@ def plist_json(plist) -> dict | None:
         r = subprocess.run(
             ["plutil", "-convert", "json", "-o", "-", str(plist)], capture_output=True, text=True, timeout=10
         )
-    except OSError, subprocess.TimeoutExpired:
+    except (OSError, subprocess.TimeoutExpired):
         return None
     if r.returncode != 0:
         return None

@@ -34,7 +34,7 @@ def load_registry(path: Path) -> dict:
     """Read the registry JSON. Missing or malformed -> empty registry."""
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return {"version": 1, "keys": []}
     if not isinstance(data, dict) or not isinstance(data.get("keys"), list):
         return {"version": 1, "keys": []}

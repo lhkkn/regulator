@@ -54,7 +54,7 @@ def _parse_deepseek(body: dict) -> tuple[float | None, str | None, bool | None]:
     raw = info.get("total_balance")
     try:
         balance = float(raw) if raw is not None else None
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         balance = None
     return balance, info.get("currency"), available
 
@@ -116,7 +116,7 @@ def all_balances(fresh: bool = False) -> list[dict]:
 
     try:
         registry = json.loads(registry_path().read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         registry = {"keys": []}
 
     candidates: list[tuple[dict, str, Callable]] = []

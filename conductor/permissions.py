@@ -73,7 +73,7 @@ def _load() -> dict:
     try:
         data = json.loads(_policy_path().read_text(encoding="utf-8"))
         return {**_DEFAULT, **data}
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return dict(_DEFAULT)
 
 

@@ -28,10 +28,20 @@ import os
 import sys
 from pathlib import Path
 
-# Flow definitions ship beside the package (the repo's `flows/` dir), so a checkout finds
-# them repo-relative. `stack_root()` assumed the private `~/Stack/control` layout and does
-# not resolve for a standalone checkout; `CONDUCTOR_FLOWS` overrides for other layouts.
-FLOWS_DIR = Path(os.environ.get("CONDUCTOR_FLOWS", str(Path(__file__).resolve().parents[1] / "flows")))
+
+def _flows_dir() -> Path:
+    """Where the flow JSON lives. `CONDUCTOR_FLOWS` wins; then a checkout's `<repo>/flows`;
+    then the copy bundled inside the installed package (`conductor/flows/`)."""
+    override = os.environ.get("CONDUCTOR_FLOWS")
+    if override:
+        return Path(override)
+    repo = Path(__file__).resolve().parents[1] / "flows"
+    if repo.is_dir():
+        return repo
+    return Path(__file__).resolve().parent / "flows"
+
+
+FLOWS_DIR = _flows_dir()
 
 
 # --- actions: () -> (ok, text) ----------------------------------------------
@@ -141,7 +151,7 @@ def load_flow(name: str) -> dict | None:
     path = FLOWS_DIR / f"{name}.json"
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return None
 
 
@@ -158,7 +168,7 @@ def list_flows() -> list[dict]:
                         "steps": len(data.get("steps", [])),
                     }
                 )
-            except OSError, ValueError:
+            except (OSError, ValueError):
                 continue
     return out
 

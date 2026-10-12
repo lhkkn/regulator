@@ -48,14 +48,14 @@ def _day_from_ms(ms: float) -> str:
 def _day_from_iso(ts: str) -> str | None:
     try:
         return datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone().strftime("%Y-%m-%d")
-    except ValueError, AttributeError:
+    except (ValueError, AttributeError):
         return None
 
 
 def _ts_from_iso(ts: str) -> float | None:
     try:
         return datetime.fromisoformat((ts or "").replace("Z", "+00:00")).timestamp()
-    except ValueError, AttributeError:
+    except (ValueError, AttributeError):
         return None
 
 

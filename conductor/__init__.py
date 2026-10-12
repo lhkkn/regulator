@@ -7,4 +7,4 @@ local-first. Built as the lab for the workspace's agentic-practices notes.
 The Python package keeps its original codename `conductor` (see `pyproject.toml`).
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"

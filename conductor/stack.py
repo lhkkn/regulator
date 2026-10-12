@@ -30,7 +30,7 @@ def _count_registry_keys(root: Path) -> int:
     try:
         reg = json.loads((stack_root() / "models" / "keys" / "registry.json").read_text())
         return len(reg.get("keys", []))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return 0
 
 
@@ -48,7 +48,7 @@ def _tiers(root: Path) -> dict[str, list[str]]:
 def render() -> str:
     root = workspace_root()
     if root is None:
-        return "Workspace stack — (no workspace configured; run `conductor init`)"
+        return "Workspace stack — (no workspace configured; run `regulator init`)"
     out: list[str] = [f"Workspace stack — {root}", ""]
 
     out.append("▸ Stack/  (the machine)")

@@ -146,7 +146,7 @@ def _check_companies() -> tuple[bool, str]:
     for r in rows:
         try:
             doc = json.loads(r["doc"])
-        except TypeError, ValueError:
+        except (TypeError, ValueError):
             continue
         for c in doc.get("compliance", []):
             if isinstance(c, dict) and c.get("due") and str(c["due"])[:10] < today:
@@ -228,7 +228,7 @@ LIVE_CHECKS = frozenset({"backup", "server_backup", "drill", "key_locations"})
 def _load() -> dict:
     try:
         return json.loads(_state_path().read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return {}
 
 
@@ -358,7 +358,7 @@ def status() -> str:
     state = _load()
     hb = heartbeat()
     if not state:
-        return "watch: never run (install with `conductor watch --install`)"
+        return "watch: never run (install with `regulator watch --install`)"
     age = "never" if hb["age_hours"] is None else f"{hb['age_hours']}h ago"
     lines = [f"watch: last run {age}" + ("" if hb["alive"] else "  ⚠ stale heartbeat")]
     for c in state.get("checks", {}).values():

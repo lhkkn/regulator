@@ -48,8 +48,11 @@ path = "conductor/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["conductor"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"flows" = "conductor/flows"
+
 [tool.ruff]
-target-version = "py314"
+target-version = "py312"
 line-length = 120
 extend-exclude = [".venv"]
 
@@ -59,7 +62,7 @@ extend-exclude = [".venv"]
 select = ["E4", "E7", "E9", "F", "B", "UP", "I"]
 
 [tool.mypy]
-python_version = "3.14"
+python_version = "3.12"
 ignore_missing_imports = true
 check_untyped_defs = true
 no_implicit_optional = true
