@@ -1,0 +1,10 @@
+# Tier-2 golden set — judged task-level cases (needs a judge; skipped offline).
+# Each case carries a `rubric`; the tool output is judged YES/NO by conductor.judge —
+# Clef (Cloudflare Workers AI) first, then a local ollama model (CONDUCTOR_JUDGE_MODEL).
+# Deterministic `contains` assertions may be combined with a rubric.
+
+{"name": "brief is an accurate, complete digest", "request": {"jsonrpc": "2.0", "id": 101, "method": "tools/call", "params": {"name": "brief"}}, "expect": {"contains": ["Regulator brief"], "rubric": "The output is a workspace digest that includes a flags section, today's token spend, a workspace drift section, agent-stack readiness, and key status."}}
+
+{"name": "reconcile reports concrete drift with an exit code", "request": {"jsonrpc": "2.0", "id": 102, "method": "tools/call", "params": {"name": "projects_reconcile", "arguments": {"local": true}}}, "expect": {"contains": ["[exit "], "rubric": "The output lists concrete drift findings (uncommitted work, branch drift, or unregistered directories) and ends with an exit code."}}
+
+{"name": "context.build carries durable memory into the session", "request": {"jsonrpc": "2.0", "id": 103, "method": "tools/call", "params": {"name": "context_build", "arguments": {"project": "conductor"}}}, "expect": {"contains": ["## Memory"], "rubric": "The output is curated project context (architecture/state) and it includes a durable-facts memory section describing the stack."}}

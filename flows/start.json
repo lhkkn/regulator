@@ -1,0 +1,10 @@
+{
+  "name": "start",
+  "description": "Session start: orient, check drift, run the watcher",
+  "steps": [
+    {"id": "orient", "action": "stack"},
+    {"id": "drift", "action": "reconcile"},
+    {"id": "watch", "action": "watch"},
+    {"id": "report", "action": "brief", "needs": ["drift", "watch"], "when": "any_fail"}
+  ]
+}

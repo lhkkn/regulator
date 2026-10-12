@@ -1,0 +1,12 @@
+{
+  "name": "audit",
+  "description": "Full health pass: drift, keys, backup, local lane, evals → digest",
+  "steps": [
+    {"id": "drift", "action": "reconcile"},
+    {"id": "keys", "action": "keys.audit"},
+    {"id": "backup", "action": "backup"},
+    {"id": "local", "action": "local"},
+    {"id": "eval", "action": "eval", "needs": ["drift", "keys"]},
+    {"id": "report", "action": "brief", "needs": ["eval", "backup", "local"]}
+  ]
+}

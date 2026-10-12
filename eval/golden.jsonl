@@ -1,0 +1,59 @@
+# Golden set for the Conductor MCP surface (deterministic, tier-1).
+# Each case is a JSON-RPC request fed to server.handle() plus `expect` assertions:
+#   contains / not_contains (substrings)  exact (full text)  is_error (bool)
+#   error_code (int, JSON-RPC)            expect_response (bool; default true)
+# These lock in the protocol contract agents depend on. Add a case for every
+# real failure that would have been a regression — never remove a failing case
+# to make the gate green; change the SUT or the expectation deliberately.
+
+{"name": "ping returns an empty result", "request": {"jsonrpc": "2.0", "id": 1, "method": "ping"}, "expect": {"expect_response": true}}
+
+{"name": "initialized notification gets no response", "request": {"jsonrpc": "2.0", "method": "notifications/initialized"}, "expect": {"expect_response": false}}
+
+{"name": "tools/list exposes the tool surface", "request": {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, "expect": {"contains": ["projects_list", "brief", "health", "keys_lookup"]}}
+
+{"name": "projects.list renders inventory", "request": {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "projects_list"}}, "expect": {"contains": ["# Workspace project inventory", "## active"], "not_contains": ["\u001b"]}}
+
+{"name": "projects.list status filter isolates one group", "request": {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "projects_list", "arguments": {"status": "active"}}}, "expect": {"contains": ["## active ("], "not_contains": ["## archived"]}}
+
+{"name": "keys.list is masked (no hashes, no vault refs)", "request": {"jsonrpc": "2.0", "id": 5, "method": "tools/call", "params": {"name": "keys_list"}}, "expect": {"contains": ["PROVIDER", "SUFFIX"], "not_contains": ["sha256", "op://"]}}
+
+{"name": "keys.audit renders an audit result", "request": {"jsonrpc": "2.0", "id": 6, "method": "tools/call", "params": {"name": "keys_audit"}}, "expect": {"contains": ["Audit"]}}
+
+{"name": "keys.lookup unknown id is a clean message", "request": {"jsonrpc": "2.0", "id": 7, "method": "tools/call", "params": {"name": "keys_lookup", "arguments": {"key_id": "nonexistent-xyz"}}}, "expect": {"contains": ["key not found"]}}
+
+{"name": "context.state enforces required project", "request": {"jsonrpc": "2.0", "id": 8, "method": "tools/call", "params": {"name": "context_state"}}, "expect": {"error_code": -32602}}
+
+{"name": "context.build enforces required project", "request": {"jsonrpc": "2.0", "id": 9, "method": "tools/call", "params": {"name": "context_build"}}, "expect": {"error_code": -32602}}
+
+{"name": "unknown method is -32601", "request": {"jsonrpc": "2.0", "id": 10, "method": "no.such.method"}, "expect": {"error_code": -32601}}
+
+{"name": "unknown tool is an isError result", "request": {"jsonrpc": "2.0", "id": 11, "method": "tools/call", "params": {"name": "no.such.tool"}}, "expect": {"is_error": true, "contains": ["unknown tool"]}}
+
+{"name": "batch frame is -32600, not a crash", "request": [{"jsonrpc": "2.0", "id": 1, "method": "ping"}], "expect": {"error_code": -32600}}
+
+{"name": "reconcile is plain text with an exit marker", "request": {"jsonrpc": "2.0", "id": 12, "method": "tools/call", "params": {"name": "projects_reconcile", "arguments": {"local": true}}}, "expect": {"contains": ["[exit "], "not_contains": ["\u001b"]}}
+
+{"name": "brief is a complete digest", "request": {"jsonrpc": "2.0", "id": 13, "method": "tools/call", "params": {"name": "brief"}}, "expect": {"contains": ["Regulator brief", "## Flags"], "not_contains": ["\u001b"]}}
+
+{"name": "tools/list exposes the machine + control-plane views", "request": {"jsonrpc": "2.0", "id": 20, "method": "tools/list"}, "expect": {"contains": ["stack", "machine", "context_build", "projects_reconcile", "watch", "trace", "permissions", "local", "flow"]}}
+
+{"name": "stack renders the machine/work/ops map", "request": {"jsonrpc": "2.0", "id": 21, "method": "tools/call", "params": {"name": "stack"}}, "expect": {"contains": ["Workspace stack", "(the machine)"]}}
+
+{"name": "machine renders the host view", "request": {"jsonrpc": "2.0", "id": 22, "method": "tools/call", "params": {"name": "machine"}}, "expect": {"contains": ["Machine —"]}}
+
+{"name": "context.build returns curated context folded with memory", "request": {"jsonrpc": "2.0", "id": 23, "method": "tools/call", "params": {"name": "context_build", "arguments": {"project": "conductor"}}}, "expect": {"contains": ["# Context", "## Memory (durable facts)"]}}
+
+{"name": "context.build unknown project is a clean message", "request": {"jsonrpc": "2.0", "id": 24, "method": "tools/call", "params": {"name": "context_build", "arguments": {"project": "no-such-project-xyz"}}}, "expect": {"contains": ["project not found"]}}
+
+{"name": "watch reports the proactive-loop heartbeat", "request": {"jsonrpc": "2.0", "id": 25, "method": "tools/call", "params": {"name": "watch"}}, "expect": {"contains": ["watch:"], "not_contains": ["\u001b"]}}
+
+{"name": "trace is a plain-text call log", "request": {"jsonrpc": "2.0", "id": 26, "method": "tools/call", "params": {"name": "trace"}}, "expect": {"not_contains": ["\u001b"]}}
+
+{"name": "permissions renders the policy + risk classes", "request": {"jsonrpc": "2.0", "id": 27, "method": "tools/call", "params": {"name": "permissions"}}, "expect": {"contains": ["permissions policy", "tool classes"]}}
+
+{"name": "keys.lookup reveal=true is denied by default policy", "request": {"jsonrpc": "2.0", "id": 28, "method": "tools/call", "params": {"name": "keys_lookup", "arguments": {"key_id": "x", "reveal": true}}}, "expect": {"is_error": true, "contains": ["denied by policy"]}}
+
+{"name": "local reports the offline lane + judge readiness", "request": {"jsonrpc": "2.0", "id": 29, "method": "tools/call", "params": {"name": "local"}}, "expect": {"contains": ["local models", "judge"]}}
+
+{"name": "flow lists the declarative workflows", "request": {"jsonrpc": "2.0", "id": 30, "method": "tools/call", "params": {"name": "flow"}}, "expect": {"contains": ["flows:", "audit", "start"]}}

@@ -1,0 +1,39 @@
+# mcp_clients.toml — every MCP server an agent loads, and why it is trusted.
+#
+# conductor/mcp/server.py serves tools THIS repo composes, so their descriptions are
+# trusted. That guarantee stops at the process boundary: the same agent config also
+# loads third-party servers, and per MCP's security guidance tool descriptions
+# "should be considered untrusted, unless obtained from a trusted server."
+#
+# The rule: a server nobody wrote down is a server nobody reviews. `conductor check`
+# fails on any server found in an agent config but missing here. Adding one is a
+# deliberate act — that is the entire control.
+#
+#   harness  which agent config declares it (opencode / kimi / dsh / claude)
+#   name     the key under "mcp" in that config
+#   trust    first-party  = code in this repo, descriptions we compose
+#            third-party  = someone else's code; descriptions are untrusted input
+#   pin      true = must run a pinned version (package runners). `@latest` is NOT a pin.
+#   why      the reason it is loaded. One line. If you cannot write it, remove the server.
+
+[[server]]
+harness = "opencode"
+name = "conductor"
+trust = "first-party"
+pin = false
+why = "This repo. 35 risk-classed tools over the workspace; descriptions composed here."
+
+[[server]]
+harness = "opencode"
+name = "tavily"
+trust = "third-party"
+pin = false
+why = "Hosted web search. Remote server: its tool descriptions are untrusted input and its results are untrusted content. Keep the API key in the {file:} reference, never inline."
+
+[[server]]
+harness = "opencode"
+name = "playwright"
+trust = "third-party"
+pin = true
+why = "Browser automation (npx -y @playwright/mcp@latest), given its own profile dir by design — see harness/configs/dsh-tui.patch.yml. `@latest` plus `-y` auto-installs an unreviewed version on every launch; pin it."
+

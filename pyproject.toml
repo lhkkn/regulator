@@ -1,0 +1,68 @@
+# Conductor has no runtime dependencies. The tool config below keeps the lint/type
+# gate reproducible: run it with `make lint`, or `conductor check` (which runs both
+# when the tools are installed — they are optional, matching the house rule of
+# degrading, not failing, when a dev tool is absent).
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "regulator"
+dynamic = ["version"]
+description = "Control plane for solo, AI-native software operations — one MCP server, typed tools, one accountable human."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = []
+authors = [{ name = "lhkkn" }]
+keywords = ["mcp", "model-context-protocol", "agents", "llm", "developer-tools", "devops", "automation"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: System :: Systems Administration",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/lhkkn/regulator"
+Repository = "https://github.com/lhkkn/regulator"
+Issues = "https://github.com/lhkkn/regulator/issues"
+
+[project.scripts]
+regulator = "conductor.__main__:main"
+
+[tool.hatch.version]
+path = "conductor/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["conductor"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+# Correctness-focused, plus safe modernizations and import ordering. Formatting is
+# enforced separately by `ruff format --check` (see Makefile `lint`).
+select = ["E4", "E7", "E9", "F", "B", "UP", "I"]
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_unused_ignores = true
+# Lenient by design: annotate gradually. The gate enforces "no errors", not full strict.
+disallow_untyped_defs = false

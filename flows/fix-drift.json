@@ -1,0 +1,12 @@
+{
+  "name": "fix-drift",
+  "description": "Reconcile, then apply the safe fix contracts: register unregistered dirs, regenerate docs, retire dead keys, prune Docker (write steps dry-run unless --apply)",
+  "steps": [
+    {"id": "drift", "action": "reconcile"},
+    {"id": "register", "action": "projects.register-drift", "needs": ["drift"]},
+    {"id": "docs", "action": "docs.render", "needs": ["drift"]},
+    {"id": "keys", "action": "keys.retire", "needs": ["drift"]},
+    {"id": "docker", "action": "docker.prune", "needs": ["drift"]},
+    {"id": "report", "action": "brief", "needs": ["register", "docs", "keys", "docker"]}
+  ]
+}

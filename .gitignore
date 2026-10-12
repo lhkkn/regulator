@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+
+# Local data (never commit secrets or derived state)
+*.db
+data/
+logs/
+
+# dev tooling / coverage artifacts
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
